@@ -1,0 +1,12 @@
+```json
+{
+  "name": "My Music Player",
+  "short_name": "Music Player",
+  "description": "Personal music player",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#0f0f14",
+  "theme_color": "#7c3aed",
+  "orientation": "portrait-primary"
+}
+```
