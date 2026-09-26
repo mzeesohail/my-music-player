@@ -1,4 +1,3 @@
-```javascript
 const CACHE_NAME = "my-music-player-v1";
 
 const APP_FILES = [
@@ -49,4 +48,3 @@ self.addEventListener("fetch", event => {
     );
   }
 });
-```
