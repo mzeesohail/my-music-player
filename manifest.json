@@ -1,4 +1,3 @@
-```json
 {
   "name": "My Music Player",
   "short_name": "Music Player",
@@ -9,4 +8,3 @@
   "theme_color": "#7c3aed",
   "orientation": "portrait-primary"
 }
-```
