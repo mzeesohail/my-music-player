@@ -5,7 +5,7 @@
 <meta name="theme-color" content="#09090b">
 <link rel="manifest" href="./manifest.json">
 <link rel="icon" href="./icon-192.png"><link rel="apple-touch-icon" href="./icon-192.png">
-<title>jus Music</title>
+<title>Jus Music</title>
 <style>
 :root{--bg:#09090b;--s1:#111114;--s2:#18181c;--s3:#202025;--tx:#f5f5f7;--soft:#a7a7ad;--bd:rgba(255,255,255,.09);--ac:#9b5cff;--ac2:#7c3aed}
 body.light{--bg:#f6f6f8;--s1:#fff;--s2:#f0f0f3;--s3:#e4e4e9;--tx:#111114;--soft:#66666d;--bd:rgba(0,0,0,.09)}
@@ -49,14 +49,14 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border:0;border-radiu
 <div id="auth" class="ov hide" style="background:var(--bg)"><div class="card">
   <h2 id="aTitle">♫ Sign in</h2>
   <label>Username</label><input id="aUser" autocapitalize="none" autocomplete="username">
-  <div id="regOnly" class="hide"><label>Display name</label><input id="aName"><label>Invite code</label><input id="aInvite"></div>
+  <div id="regOnly" class="hide"><label>Display name</label><input id="aName"></div>
   <label>Password</label><input id="aPass" type="password" autocomplete="current-password">
   <button class="btn" id="aGo">Sign in</button><div class="msg" id="aMsg"></div>
   <button class="link" id="aSwitch">Create an account</button>
 </div></div>
 
 <header><div class="row">
-  <div class="grow"><h1>♫ My Music Player</h1><div class="who" id="who"></div></div>
+  <div class="grow"><h1>♫ Jus Music</h1><div class="who" id="who"></div></div>
   <button class="ib" id="bSearch" title="Search">⌕</button>
   <button class="ib hide" id="bUp" title="Upload song">⤒</button>
   <button class="ib" id="bTheme" title="Theme">☼</button>
@@ -88,7 +88,11 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border:0;border-radiu
 </div></div>
 
 <script>
-/* ===== SETTINGS: only this line needs your Apps Script Web App URL (ends with /exec) ===== */
+/* ===================================================================
+   PASTE YOUR APPS SCRIPT WEB APP URL BELOW. It must end in /exec
+   (not /dev). Test it first by opening it in a browser tab - it
+   should show: {"ok":true,"app":"Jus Music API"}
+   =================================================================== */
 const API_URL = "https://script.google.com/macros/s/AKfycbx__pPoUcKktHd7j78BYa-6Zbxo3WnFfQpHKCW1CuM-4eDRcfTw_5qz5IeLBVY1Jf5f6Q/exec";
 
 const $ = id => document.getElementById(id), audio = $("audio");
@@ -99,9 +103,7 @@ const FAV = "⭐ Favorites", REC = "🕘 Recent", status = t => $("status").text
 
 /* ---------- API ---------- */
 async function api(fn, args, signal, ms) {
-  const t = setTimeout(() => ctrl && 0, 0);
   const res = await fetch(API_URL, { method:"POST", headers:{"Content-Type":"text/plain;charset=utf-8"}, body:JSON.stringify({fn, args}), signal: signal || AbortSignal.timeout(ms || 60000) });
-  clearTimeout(t);
   const r = await res.json();
   if (r && r.auth === false) { showAuth(); throw new Error("Please sign in again."); }
   return r;
@@ -115,11 +117,11 @@ $("aSwitch").onclick = () => { reg = !reg; $("regOnly").classList.toggle("hide",
 $("aGo").onclick = async () => {
   $("aGo").disabled = true; $("aMsg").textContent = "Please wait...";
   try {
-    const r = reg ? await api("registerAccount",[$("aUser").value,$("aPass").value,$("aName").value,$("aInvite").value])
+    const r = reg ? await api("registerAccount",[$("aUser").value,$("aPass").value,$("aName").value])
                   : await api("loginAccount",[$("aUser").value,$("aPass").value]);
     if (!r.ok) { $("aMsg").textContent = r.message; return; }
     token = r.sessionToken; LS.set("mp_token", token); me = r.user; $("aPass").value = ""; $("auth").classList.add("hide"); startApp();
-  } catch (e) { $("aMsg").textContent = "Could not reach server. Check internet / API URL."; }
+  } catch (e) { $("aMsg").textContent = API_URL.indexOf("PASTE_YOUR") === 0 ? "Set your Apps Script URL first (see the API_URL line in index.html)." : "Could not reach server. Check internet / API URL / deployment access."; }
   finally { $("aGo").disabled = false; }
 };
 $("aPass").addEventListener("keydown", e => e.key === "Enter" && $("aGo").click());
@@ -217,7 +219,7 @@ $("prog").oninput = () => { if (isFinite(audio.duration)) audio.currentTime = $(
 const fmt = s => isFinite(s) ? Math.floor(s / 60) + ":" + String(Math.floor(s % 60)).padStart(2, "0") : "0:00";
 function media() {                                        // lock-screen / notification controls on Android
   if (!("mediaSession" in navigator) || !cur) return;
-  navigator.mediaSession.metadata = new MediaMetadata({ title: cur.title, artist: cur.artist || cur.language, album: "My Music Player", artwork:[{src:"icon-512.png",sizes:"512x512",type:"image/png"}] });
+  navigator.mediaSession.metadata = new MediaMetadata({ title: cur.title, artist: cur.artist || cur.language, album: "Jus Music", artwork:[{src:"icon-512.png",sizes:"512x512",type:"image/png"}] });
   [["play",()=>audio.play()],["pause",()=>audio.pause()],["nexttrack",()=>next(false)],["previoustrack",prev]].forEach(([a,f]) => { try { navigator.mediaSession.setActionHandler(a, f); } catch(e){} });
 }
 
